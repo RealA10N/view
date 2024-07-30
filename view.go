@@ -1,0 +1,63 @@
+package view
+
+import (
+	"golang.org/x/exp/constraints"
+)
+
+type BasicView[T comparable, Offset constraints.Unsigned] struct {
+	Start, End Offset
+	data       *[]T
+}
+
+type View[T comparable] struct{ BasicView[T, uint] }
+
+// Create a new view of the given slice.
+func NewBasicView[T comparable, Offset constraints.Unsigned](data []T) BasicView[T, Offset] {
+	return BasicView[T, Offset]{
+		Start: 0,
+		End:   Offset(len(data)),
+		data:  &data,
+	}
+}
+
+func NewView[T comparable](data []T) View[T] {
+	return View[T]{NewBasicView[T, uint](data)}
+}
+
+// Convert the view into a slice and return a copy of the viewed slice only.
+func (v BasicView[T, Offset]) Raw() []T {
+	return (*v.data)[v.Start:v.End]
+}
+
+// Returns the size of the view slice.
+func (v BasicView[T, Offset]) Len() uint {
+	return uint(v.End - v.Start)
+}
+
+// Returns the item at the provided index, relative to the view bounds.
+func (v BasicView[T, Offset]) At(index Offset) *T {
+	index += v.Start
+	if index >= v.End {
+		return nil
+	}
+	return &(*v.data)[index]
+}
+
+func (v BasicView[T, Offset]) Equals(o BasicView[T, Offset]) bool {
+	if v.Len() != o.Len() {
+		return false
+	}
+
+	var vi Offset = v.Start
+	var oi Offset = o.Start
+
+	for vi < v.End {
+		if (*v.data)[vi] != (*o.data)[oi] {
+			return false
+		}
+		vi++
+		oi++
+	}
+
+	return true
+}
