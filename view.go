@@ -4,14 +4,19 @@ import (
 	"golang.org/x/exp/constraints"
 )
 
+// The most basic slice view type.
+// Internally, it contains a pointer to a heap allocated slice of type []T,
+// and Start & End indecies of type Offset.
 type BasicView[T comparable, Offset constraints.Unsigned] struct {
 	Start, End Offset
 	data       *[]T
 }
 
+// View is a BasicView struct but with an offset type set to uint.
 type View[T comparable] struct{ BasicView[T, uint] }
 
-// Create a new view of the given slice.
+// Create a new basic view from an already existing slice.
+// The view initially spans over the whole slice.
 func NewBasicView[T comparable, Offset constraints.Unsigned](data []T) BasicView[T, Offset] {
 	return BasicView[T, Offset]{
 		Start: 0,
@@ -20,6 +25,8 @@ func NewBasicView[T comparable, Offset constraints.Unsigned](data []T) BasicView
 	}
 }
 
+// Create a new view from an already existing slice.
+// The view initially spans over the whole slice.
 func NewView[T comparable](data []T) View[T] {
 	return View[T]{NewBasicView[T, uint](data)}
 }
@@ -43,6 +50,8 @@ func (v BasicView[T, Offset]) At(index Offset) *T {
 	return &(*v.data)[index]
 }
 
+// Compares two views and returns true if and only their lengths are equal
+// and the corresponding items in both views are equal.
 func (v BasicView[T, Offset]) Equals(o BasicView[T, Offset]) bool {
 	if v.Len() != o.Len() {
 		return false
