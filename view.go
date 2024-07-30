@@ -12,9 +12,6 @@ type BasicView[T comparable, Offset constraints.Unsigned] struct {
 	data       *[]T
 }
 
-// View is a BasicView struct but with an offset type set to uint.
-type View[T comparable] struct{ BasicView[T, uint] }
-
 // Create a new basic view from an already existing slice.
 // The view initially spans over the whole slice.
 func NewBasicView[T comparable, Offset constraints.Unsigned](data []T) BasicView[T, Offset] {
@@ -27,8 +24,8 @@ func NewBasicView[T comparable, Offset constraints.Unsigned](data []T) BasicView
 
 // Create a new view from an already existing slice.
 // The view initially spans over the whole slice.
-func NewView[T comparable](data []T) View[T] {
-	return View[T]{NewBasicView[T, uint](data)}
+func NewView[T comparable](data []T) BasicView[T, uint] {
+	return NewBasicView[T, uint](data)
 }
 
 // Convert the view into a slice and return a copy of the viewed slice only.
@@ -50,6 +47,32 @@ func (v BasicView[T, Offset]) At(index Offset) *T {
 	return &(*v.data)[index]
 }
 
+// Iterate over all values in the view (rangefunc).
+func (v BasicView[T, Offset]) Range(yield func(T) bool) {
+	for i := v.Start; i < v.End; i++ {
+		if !yield((*v.data)[i]) {
+			return
+		}
+	}
+}
+
+// Iterate over all values in the view (rangefunc).
+// Additionally, provides the iteration index as the first yield argument,
+// where the index is relative to the view start.
+func (v BasicView[T, Offset]) Range2(yield func(Offset, T) bool) {
+	var sliceIndex Offset = v.Start
+	var viewIndex Offset = 0
+
+	for sliceIndex < v.End {
+		if !yield(viewIndex, (*v.data)[sliceIndex]) {
+			return
+		}
+
+		sliceIndex++
+		viewIndex++
+	}
+}
+
 // Compares two views and returns true if and only their lengths are equal
 // and the corresponding items in both views are equal.
 func (v BasicView[T, Offset]) Equals(o BasicView[T, Offset]) bool {
@@ -57,16 +80,15 @@ func (v BasicView[T, Offset]) Equals(o BasicView[T, Offset]) bool {
 		return false
 	}
 
-	var vi Offset = v.Start
-	var oi Offset = o.Start
-
-	for vi < v.End {
-		if (*v.data)[vi] != (*o.data)[oi] {
+	ret := true
+	yield := func(index Offset, item T) bool {
+		if *o.At(index) != item {
+			ret = false
 			return false
 		}
-		vi++
-		oi++
+		return true
 	}
 
-	return true
+	v.Range2(yield)
+	return ret
 }
