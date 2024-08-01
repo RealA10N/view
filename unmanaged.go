@@ -15,7 +15,7 @@ type UnmanagedView[T comparable, Offset constraints.Unsigned] struct {
 
 type ViewContext[T any] []T
 
-// Create a new basic view from an already existing slice.
+// Create a new (unmanaged) view from an already existing slice.
 // The view initially spans over the whole slice.
 func NewUnmanagedView[T comparable, Offset constraints.Unsigned](data []T) (
 	UnmanagedView[T, Offset], ViewContext[T],
@@ -38,7 +38,7 @@ func (v UnmanagedView[T, Offset]) Attach(ctx ViewContext[T]) View[T, Offset] {
 	}
 }
 
-// Returns the raw undel
+// Returns the raw underlying slice that the view is bound to.
 func (v UnmanagedView[T, Offset]) Raw(ctx ViewContext[T]) []T {
 	return ctx[v.Start:v.End]
 }
