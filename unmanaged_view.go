@@ -31,6 +31,7 @@ func NewUnmanagedView[T comparable, Offset constraints.Unsigned](data []T) (
 	return view, ctx
 }
 
+// Returns the raw undel
 func (v UnmanagedView[T, Offset]) Raw(ctx ViewContext[T]) []T {
 	return ctx[v.Start:v.End]
 }
@@ -41,6 +42,8 @@ func (v UnmanagedView[T, Offset]) Len() Offset {
 }
 
 // Returns the item at the provided index, relative to the view bounds.
+// If the provided index goes out of the view bounds, an error is returned,
+// with an undefined value.
 func (v UnmanagedView[T, Offset]) At(ctx ViewContext[T], index Offset) (T, error) {
 	index += v.Start
 	if index >= v.End {
@@ -50,6 +53,16 @@ func (v UnmanagedView[T, Offset]) At(ctx ViewContext[T], index Offset) (T, error
 	return ctx[index], nil
 }
 
+// Returns the item at the provided index, relative to the view bounds.
+// Does not check view bounds, and if the provided index is greater than the
+// view length, the function might panic or return an undefined value.
+func (v UnmanagedView[T, Offset]) AtUnsafe(ctx ViewContext[T], index Offset) T {
+	return ctx[v.Start+index]
+}
+
+// Return a subview of the current view.
+// Start and End indecies are relative to the current view bounds,
+// i.e. v.Subview(0, v.Len()) will return a subview that equals to the current one.
 func (v UnmanagedView[T, Offset]) Subview(start, end Offset) (subview UnmanagedView[T, Offset]) {
 	if start > end {
 		// provided start index greater than end index
