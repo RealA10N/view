@@ -118,3 +118,34 @@ func (v UnmanagedView[T, Offset]) Range2(ctx ViewContext[T]) func(func(Offset, T
 		}
 	}
 }
+
+// Similar to strings.FieldsFunc.
+// Splits the input view at each run of items satisfying f(item) and returns an
+// array of subviews of the origin view.
+//
+// Fields makes no guarantees about the order in which it calls f and assumes that
+// f always outputs the same value for a given input.
+func (v UnmanagedView[T, Offset]) Fields(ctx ViewContext[T], f func(T) bool) []UnmanagedView[T, Offset] {
+	fields := make([]UnmanagedView[T, Offset], 0)
+	start := Offset(0)
+	collecting := false
+
+	for end, item := range v.Range2(ctx) {
+		shouldSplit := f(item)
+		if shouldSplit && collecting {
+			collecting = false
+			subview := UnmanagedView[T, Offset]{Start: start, End: end}
+			fields = append(fields, subview)
+		} else if !shouldSplit && !collecting {
+			collecting = true
+			start = end
+		}
+	}
+
+	if collecting {
+		subview := UnmanagedView[T, Offset]{Start: start, End: v.Len()}
+		fields = append(fields, subview)
+	}
+
+	return fields
+}

@@ -62,3 +62,18 @@ func (v View[T, Offset]) Range() func(func(T) bool) {
 func (v View[T, Offset]) Range2() func(func(Offset, T) bool) {
 	return v.unmanaged.Range2(v.ctx)
 }
+
+// Similar to strings.FieldsFunc.
+// Splits the input view at each run of items satisfying f(item) and returns an
+// array of subviews of the origin view.
+//
+// Fields makes no guarantees about the order in which it calls f and assumes that
+// f always outputs the same value for a given input.
+func (v View[T, Offset]) Fields(f func(T) bool) []View[T, Offset] {
+	unmanagedFields := v.unmanaged.Fields(v.ctx, f)
+	fields := make([]View[T, Offset], len(unmanagedFields))
+	for idx, unmanaged := range unmanagedFields {
+		fields[idx] = unmanaged.Attach(v.ctx)
+	}
+	return fields
+}
