@@ -24,3 +24,10 @@ func TestReversedBoundsSubview(t *testing.T) {
 	v := view.NewView[int, uint](data).Subview(2, 1)
 	assert.Equal(t, []int{}, v.Raw())
 }
+
+func TestDetach(t *testing.T) {
+	v := view.NewView[int, uint]([]int{1, 2, 3})
+	unmanaged, _ := v.Detach()
+	assert.EqualValues(t, 0, unmanaged.Start)
+	assert.EqualValues(t, 3, unmanaged.End)
+}

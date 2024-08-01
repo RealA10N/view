@@ -31,6 +31,13 @@ func NewUnmanagedView[T comparable, Offset constraints.Unsigned](data []T) (
 	return view, ctx
 }
 
+func (v UnmanagedView[T, Offset]) Attach(ctx ViewContext[T]) View[T, Offset] {
+	return View[T, Offset]{
+		unmanaged: v,
+		ctx:       ctx,
+	}
+}
+
 // Returns the raw undel
 func (v UnmanagedView[T, Offset]) Raw(ctx ViewContext[T]) []T {
 	return ctx[v.Start:v.End]

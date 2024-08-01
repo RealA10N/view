@@ -9,11 +9,8 @@ type View[T comparable, Offset constraints.Unsigned] struct {
 	ctx       ViewContext[T]
 }
 
-func (v UnmanagedView[T, Offset]) Attach(ctx ViewContext[T]) View[T, Offset] {
-	return View[T, Offset]{
-		unmanaged: v,
-		ctx:       ctx,
-	}
+func (v View[T, Offset]) Detach() (UnmanagedView[T, Offset], ViewContext[T]) {
+	return UnmanagedView[T, Offset](v.unmanaged), v.ctx
 }
 
 func NewView[T comparable, Offset constraints.Unsigned](data []T) View[T, Offset] {
