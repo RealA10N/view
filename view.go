@@ -56,6 +56,10 @@ func (v View[T, Offset]) Equal(o View[T, Offset]) bool {
 	return v.unmanaged.Equal(v.ctx, o.unmanaged, o.ctx)
 }
 
+func (v View[T, Offset]) Index(f func(T) bool) (Offset, error) {
+	return v.unmanaged.Index(v.ctx, f)
+}
+
 // Iterate over all values in the view (rangefunc).
 func (v View[T, Offset]) Range() func(func(T) bool) {
 	return v.unmanaged.Range(v.ctx)

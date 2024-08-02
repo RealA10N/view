@@ -142,6 +142,17 @@ func (v UnmanagedView[T, Offset]) Range2(ctx ViewContext[T]) func(func(Offset, T
 	}
 }
 
+func (v UnmanagedView[T, Offset]) Index(ctx ViewContext[T], f func(T) bool) (Offset, error) {
+	for idx, item := range v.Range2(ctx) {
+		if f(item) {
+			return idx, nil
+		}
+	}
+
+	var o Offset
+	return o, errors.New("no item found that matches predicate")
+}
+
 // Similar to strings.FieldsFunc.
 // Splits the input view at each run of items satisfying f(item) and returns an
 // array of subviews of the origin view.

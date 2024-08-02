@@ -47,6 +47,24 @@ func TestEqualSubstrings(t *testing.T) {
 	assert.False(t, b.Equal(a))
 }
 
+func TestIndexSimpleCase(t *testing.T) {
+	v := view.NewView[int, uint]([]int{1337, -710, 2902}).Subview(1, 3)
+	called := []int{}
+	idx, err := v.Index(func(n int) bool { called = append(called, n); return n > 0 })
+	assert.NoError(t, err)
+	assert.EqualValues(t, 1, idx)
+	assert.Equal(t, []int{-710, 2902}, called)
+}
+
+func TestIndexNotFound(t *testing.T) {
+	data := []int{-1, 2, 3, -4}
+	v := view.NewView[int, uint](data)
+	called := []int{}
+	_, err := v.Index(func(n int) bool { called = append(called, n); return n > 10 })
+	assert.Error(t, err)
+	assert.Equal(t, data, called)
+}
+
 func TestFields(t *testing.T) {
 	input := []rune("  foo1;bar2,baz3...")
 	v := view.NewView[rune, uint](input)
