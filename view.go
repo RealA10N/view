@@ -76,8 +76,8 @@ func (v View[T, Offset]) Contains(item T) bool {
 // This assumes that both views operate under the same context.
 // More specificly, the context of the returned view will be the context of
 // this view.
-func (v View[T, Offset]) Merge(o View[T, Offset]) View[T, Offset] {
-	return v.unmanaged.Merge(o.unmanaged).Attach(v.ctx)
+func (v View[T, Offset]) Merge(others ...View[T, Offset]) View[T, Offset] {
+	return v.unmanaged.Merge(detachMany(others)...).Attach(v.ctx)
 }
 
 // Partition this view to two consecutive views, splitting them at the provided index.
@@ -105,10 +105,25 @@ func (v View[T, Offset]) Range2() func(func(Offset, T) bool) {
 // Fields makes no guarantees about the order in which it calls f and assumes that
 // f always outputs the same value for a given input.
 func (v View[T, Offset]) Fields(f func(T) bool) []View[T, Offset] {
-	unmanagedFields := v.unmanaged.Fields(v.ctx, f)
-	fields := make([]View[T, Offset], len(unmanagedFields))
-	for idx, unmanaged := range unmanagedFields {
-		fields[idx] = unmanaged.Attach(v.ctx)
+	return attachMany(v.ctx, v.unmanaged.Fields(v.ctx, f))
+}
+
+func attachMany[T comparable, Offset constraints.Unsigned](
+	ctx ViewContext[T], many []UnmanagedView[T, Offset],
+) []View[T, Offset] {
+	views := make([]View[T, Offset], len(many))
+	for idx, unmanaged := range many {
+		views[idx] = unmanaged.Attach(ctx)
 	}
-	return fields
+	return views
+}
+
+func detachMany[T comparable, Offset constraints.Unsigned](
+	many []View[T, Offset],
+) []UnmanagedView[T, Offset] {
+	views := make([]UnmanagedView[T, Offset], len(many))
+	for idx, view := range many {
+		views[idx] = view.unmanaged
+	}
+	return views
 }

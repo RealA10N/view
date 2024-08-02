@@ -166,8 +166,15 @@ func (v UnmanagedView[T, Offset]) Contains(ctx ViewContext[T], item T) bool {
 // Merge this and the other provided view into a one bigger view.
 // This is done by setting newView.Start to min(v.Start, o.Start) and
 // newView.End to max(v.End, o.End).
-func (v UnmanagedView[T, Offset]) Merge(o UnmanagedView[T, Offset]) UnmanagedView[T, Offset] {
-	return UnmanagedView[T, Offset]{Start: min(v.Start, o.Start), End: max(v.End, o.End)}
+func (v UnmanagedView[T, Offset]) Merge(others ...UnmanagedView[T, Offset]) UnmanagedView[T, Offset] {
+	nv := v
+
+	for _, o := range others {
+		nv.Start = min(nv.Start, o.Start)
+		nv.End = max(nv.End, o.End)
+	}
+
+	return nv
 }
 
 // Partition this view to two consecutive views, splitting them at the provided index.
