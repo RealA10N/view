@@ -51,6 +51,11 @@ func (v View[T, Offset]) Subview(start, end Offset) View[T, Offset] {
 	return v.unmanaged.Subview(start, end).Attach(v.ctx)
 }
 
+// returns true if the underlying views are identical in their content.
+func (v View[T, Offset]) Equal(o View[T, Offset]) bool {
+	return v.unmanaged.Equal(v.ctx, o.unmanaged, o.ctx)
+}
+
 // Iterate over all values in the view (rangefunc).
 func (v View[T, Offset]) Range() func(func(T) bool) {
 	return v.unmanaged.Range(v.ctx)

@@ -89,6 +89,29 @@ func (v UnmanagedView[T, Offset]) Subview(start, end Offset) (subview UnmanagedV
 	return
 }
 
+// returns true if the underlying views are identical in their content.
+//
+// The first argument is the context of the this view.
+// Then comes the other unmanaged view, and the third argument is the context
+// of the other unmanaged view which was provided in the second argument.
+func (v UnmanagedView[T, Offset]) Equal(
+	vctx ViewContext[T], o UnmanagedView[T, Offset], octx ViewContext[T],
+) bool {
+	if v.Len() != o.Len() {
+		return false
+	}
+
+	len := v.Len()
+	var i Offset = 0
+	for ; i < len; i++ {
+		if v.AtUnsafe(vctx, i) != o.AtUnsafe(octx, i) {
+			return false
+		}
+	}
+
+	return true
+}
+
 // Iterate over all values in the view (rangefunc).
 func (v UnmanagedView[T, Offset]) Range(ctx ViewContext[T]) func(func(T) bool) {
 	return func(yield func(T) bool) {

@@ -33,6 +33,20 @@ func TestDetach(t *testing.T) {
 	assert.EqualValues(t, 3, unmanaged.End)
 }
 
+func TestEqualSimpleCase(t *testing.T) {
+	a := view.NewView[rune, uint]([]rune("gila bisa tomer natanel")).Subview(5, 15)
+	b := view.NewView[rune, uint]([]rune("bisa tomer lorem ipsum")).Subview(0, 10)
+	assert.True(t, a.Equal(b))
+	assert.True(t, b.Equal(a))
+}
+
+func TestEqualSubstrings(t *testing.T) {
+	a := view.NewView[rune, uint]([]rune("gila bisa"))
+	b := a.Subview(0, 8)
+	assert.False(t, a.Equal(b))
+	assert.False(t, b.Equal(a))
+}
+
 func TestFields(t *testing.T) {
 	input := []rune("  foo1;bar2,baz3...")
 	v := view.NewView[rune, uint](input)
