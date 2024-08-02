@@ -71,6 +71,12 @@ func TestContainsSimpleCase(t *testing.T) {
 	assert.False(t, v.Subview(1, 3).Contains(1))
 }
 
+func TestHasPrefixSimpleCase(t *testing.T) {
+	v := view.NewView[int, uint]([]int{0, 1, 2, 3, 4, 5}).Subview(2, 5)
+	prefix := view.NewView[int, uint]([]int{-1, 2, 3, 0}).Subview(1, 3)
+	assert.True(t, v.HasPrefix(prefix))
+}
+
 func TestMergeSimpleCase(t *testing.T) {
 	data := []int{0, 1, 2, 3, 4, 5, 6}
 	v := view.NewView[int, uint](data)

@@ -69,6 +69,12 @@ func (v View[T, Offset]) Contains(item T) bool {
 	return v.unmanaged.Contains(v.ctx, item)
 }
 
+// Returns true iff the provided view is a prefix of the current view.
+func (v View[T, Offset]) HasPrefix(prefix View[T, Offset]) bool {
+	unmanagedPrefix, prefixCtx := prefix.Detach()
+	return v.unmanaged.HasPrefix(v.ctx, unmanagedPrefix, prefixCtx)
+}
+
 // Merge this and the other provided view into a one bigger view.
 // This is done by setting newView.Start to min(v.Start, o.Start) and
 // newView.End to max(v.End, o.End).
