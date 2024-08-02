@@ -64,6 +64,15 @@ func TestIndexNotFound(t *testing.T) {
 	assert.Equal(t, data, called)
 }
 
+func TestMergeSimpleCase(t *testing.T) {
+	data := []int{0, 1, 2, 3, 4, 5, 6}
+	v := view.NewView[int, uint](data)
+	a := v.Subview(1, 3)
+	b := v.Subview(5, 6)
+	m := a.Merge(b)
+	assert.Equal(t, []int{1, 2, 3, 4, 5}, m.Raw())
+}
+
 func TestPartitionSimpleCase(t *testing.T) {
 	data := []int{1, 2, 3, 4, 5}
 	v := view.NewView[int, uint](data)

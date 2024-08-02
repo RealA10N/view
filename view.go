@@ -64,6 +64,17 @@ func (v View[T, Offset]) Index(f func(T) bool) Offset {
 	return v.unmanaged.Index(v.ctx, f)
 }
 
+// Merge this and the other provided view into a one bigger view.
+// This is done by setting newView.Start to min(v.Start, o.Start) and
+// newView.End to max(v.End, o.End).
+//
+// This assumes that both views operate under the same context.
+// More specificly, the context of the returned view will be the context of
+// this view.
+func (v View[T, Offset]) Merge(o View[T, Offset]) View[T, Offset] {
+	return v.unmanaged.Merge(o.unmanaged).Attach(v.ctx)
+}
+
 // Partition this view to two consecutive views, splitting them at the provided index.
 func (v View[T, Offset]) Partition(index Offset) (View[T, Offset], View[T, Offset]) {
 	a, b := v.unmanaged.Partition(v.ctx, index)
