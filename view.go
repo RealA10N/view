@@ -56,8 +56,16 @@ func (v View[T, Offset]) Equal(o View[T, Offset]) bool {
 	return v.unmanaged.Equal(v.ctx, o.unmanaged, o.ctx)
 }
 
+// Find the first item in the view bounds that returns true on the provided predicate.
+// Return the index of such item (relative to the view start offset).
 func (v View[T, Offset]) Index(f func(T) bool) (Offset, error) {
 	return v.unmanaged.Index(v.ctx, f)
+}
+
+// Partition this view to two consecutive views, splitting them at the provided index.
+func (v View[T, Offset]) Partition(index Offset) (View[T, Offset], View[T, Offset]) {
+	a, b := v.unmanaged.Partition(v.ctx, index)
+	return a.Attach(v.ctx), b.Attach(v.ctx)
 }
 
 // Iterate over all values in the view (rangefunc).

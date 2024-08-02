@@ -70,23 +70,20 @@ func (v UnmanagedView[T, Offset]) AtUnsafe(ctx ViewContext[T], index Offset) T {
 // Return a subview of the current view.
 // Start and End indecies are relative to the current view bounds,
 // i.e. v.Subview(0, v.Len()) will return a subview that equals to the current one.
-func (v UnmanagedView[T, Offset]) Subview(start, end Offset) (subview UnmanagedView[T, Offset]) {
+func (v UnmanagedView[T, Offset]) Subview(start, end Offset) UnmanagedView[T, Offset] {
+	len := v.Len()
+	if end > len {
+		end = len
+	}
+
 	if start > end {
-		// provided start index greater than end index
-		return
+		start = end
 	}
 
-	if v.Start+end > v.End {
-		// provided end index is out of current view bound
-		return
-	}
-
-	subview = UnmanagedView[T, Offset]{
+	return UnmanagedView[T, Offset]{
 		Start: v.Start + start,
 		End:   v.Start + end,
 	}
-
-	return
 }
 
 // returns true if the underlying views are identical in their content.
@@ -142,6 +139,8 @@ func (v UnmanagedView[T, Offset]) Range2(ctx ViewContext[T]) func(func(Offset, T
 	}
 }
 
+// Find the first item in the view bounds that returns true on the provided predicate.
+// Return the index of such item (relative to the view start offset).
 func (v UnmanagedView[T, Offset]) Index(ctx ViewContext[T], f func(T) bool) (Offset, error) {
 	for idx, item := range v.Range2(ctx) {
 		if f(item) {
@@ -151,6 +150,13 @@ func (v UnmanagedView[T, Offset]) Index(ctx ViewContext[T], f func(T) bool) (Off
 
 	var o Offset
 	return o, errors.New("no item found that matches predicate")
+}
+
+// Partition this view to two consecutive views, splitting them at the provided index.
+func (v UnmanagedView[T, Offset]) Partition(
+	ctx ViewContext[T], index Offset,
+) (UnmanagedView[T, Offset], UnmanagedView[T, Offset]) {
+	return v.Subview(0, index), v.Subview(index, v.Len())
 }
 
 // Similar to strings.FieldsFunc.

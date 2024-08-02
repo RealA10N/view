@@ -65,6 +65,30 @@ func TestIndexNotFound(t *testing.T) {
 	assert.Equal(t, data, called)
 }
 
+func TestPartitionSimpleCase(t *testing.T) {
+	data := []int{1, 2, 3, 4, 5}
+	v := view.NewView[int, uint](data)
+	a, b := v.Partition(2)
+	assert.Equal(t, []int{1, 2}, a.Raw())
+	assert.Equal(t, []int{3, 4, 5}, b.Raw())
+}
+
+func TestPartitionZeroIndex(t *testing.T) {
+	data := []int{1, 2, 3, 4, 5}
+	v := view.NewView[int, uint](data)
+	a, b := v.Partition(0)
+	assert.Equal(t, []int{}, a.Raw())
+	assert.Equal(t, []int{1, 2, 3, 4, 5}, b.Raw())
+}
+
+func TestPartitionOutOfBoundsIndex(t *testing.T) {
+	data := []int{1, 2, 3, 4, 5}
+	v := view.NewView[int, uint](data)
+	a, b := v.Partition(10)
+	assert.Equal(t, []int{1, 2, 3, 4, 5}, a.Raw())
+	assert.Equal(t, []int{}, b.Raw())
+}
+
 func TestFields(t *testing.T) {
 	input := []rune("  foo1;bar2,baz3...")
 	v := view.NewView[rune, uint](input)
