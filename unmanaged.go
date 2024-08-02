@@ -141,15 +141,16 @@ func (v UnmanagedView[T, Offset]) Range2(ctx ViewContext[T]) func(func(Offset, T
 
 // Find the first item in the view bounds that returns true on the provided predicate.
 // Return the index of such item (relative to the view start offset).
-func (v UnmanagedView[T, Offset]) Index(ctx ViewContext[T], f func(T) bool) (Offset, error) {
+//
+// If no items return true on the provided predicate, returns v.Len().
+func (v UnmanagedView[T, Offset]) Index(ctx ViewContext[T], f func(T) bool) Offset {
 	for idx, item := range v.Range2(ctx) {
 		if f(item) {
-			return idx, nil
+			return idx
 		}
 	}
 
-	var o Offset
-	return o, errors.New("no item found that matches predicate")
+	return v.Len()
 }
 
 // Partition this view to two consecutive views, splitting them at the provided index.

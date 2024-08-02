@@ -58,7 +58,9 @@ func (v View[T, Offset]) Equal(o View[T, Offset]) bool {
 
 // Find the first item in the view bounds that returns true on the provided predicate.
 // Return the index of such item (relative to the view start offset).
-func (v View[T, Offset]) Index(f func(T) bool) (Offset, error) {
+//
+// If no items return true on the provided predicate, returns v.Len().
+func (v View[T, Offset]) Index(f func(T) bool) Offset {
 	return v.unmanaged.Index(v.ctx, f)
 }
 
