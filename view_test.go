@@ -64,6 +64,13 @@ func TestIndexNotFound(t *testing.T) {
 	assert.Equal(t, data, called)
 }
 
+func TestContainsSimpleCase(t *testing.T) {
+	data := []int{1, 2, 3}
+	v := view.NewView[int, uint](data)
+	assert.True(t, v.Contains(1))
+	assert.False(t, v.Subview(1, 3).Contains(1))
+}
+
 func TestMergeSimpleCase(t *testing.T) {
 	data := []int{0, 1, 2, 3, 4, 5, 6}
 	v := view.NewView[int, uint](data)

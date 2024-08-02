@@ -153,6 +153,16 @@ func (v UnmanagedView[T, Offset]) Index(ctx ViewContext[T], f func(T) bool) Offs
 	return v.Len()
 }
 
+// Returns true iff the view contains the provided item.
+func (v UnmanagedView[T, Offset]) Contains(ctx ViewContext[T], item T) bool {
+	for cur := range v.Range(ctx) {
+		if cur == item {
+			return true
+		}
+	}
+	return false
+}
+
 // Merge this and the other provided view into a one bigger view.
 // This is done by setting newView.Start to min(v.Start, o.Start) and
 // newView.End to max(v.End, o.End).

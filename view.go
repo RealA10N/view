@@ -64,6 +64,11 @@ func (v View[T, Offset]) Index(f func(T) bool) Offset {
 	return v.unmanaged.Index(v.ctx, f)
 }
 
+// Returns true iff the view contains the provided item.
+func (v View[T, Offset]) Contains(item T) bool {
+	return v.unmanaged.Contains(v.ctx, item)
+}
+
 // Merge this and the other provided view into a one bigger view.
 // This is done by setting newView.Start to min(v.Start, o.Start) and
 // newView.End to max(v.End, o.End).
