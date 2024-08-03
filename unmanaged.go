@@ -183,6 +183,26 @@ func (v UnmanagedView[T, Offset]) HasPrefix(
 	return true
 }
 
+// Returns true iff the provided view is a suffix of the current view.
+func (v UnmanagedView[T, Offset]) HasSuffix(
+	ctx ViewContext[T],
+	suffix UnmanagedView[T, Offset],
+	suffixCtx ViewContext[T],
+) bool {
+	if v.Len() < suffix.Len() {
+		return false
+	}
+
+	n := suffix.Len()
+	for i := Offset(0); i < n; i++ {
+		if v.AtUnsafe(ctx, v.Len()-n+i) != suffix.AtUnsafe(suffixCtx, i) {
+			return false
+		}
+	}
+
+	return true
+}
+
 // Merge this and the other provided view into a one bigger view.
 // This is done by setting newView.Start to min(v.Start, o.Start) and
 // newView.End to max(v.End, o.End).

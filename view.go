@@ -75,6 +75,12 @@ func (v View[T, Offset]) HasPrefix(prefix View[T, Offset]) bool {
 	return v.unmanaged.HasPrefix(v.ctx, unmanagedPrefix, prefixCtx)
 }
 
+// Returns true iff the provided view is a suffix of the current view.
+func (v View[T, Offset]) HasSuffix(suffix View[T, Offset]) bool {
+	unmanagedSuffix, suffixCtx := suffix.Detach()
+	return v.unmanaged.HasSuffix(v.ctx, unmanagedSuffix, suffixCtx)
+}
+
 // Merge this and the other provided view into a one bigger view.
 // This is done by setting newView.Start to min(v.Start, o.Start) and
 // newView.End to max(v.End, o.End).
