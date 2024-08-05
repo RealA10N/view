@@ -1,4 +1,4 @@
-module github.com/RealA10N/view
+module alon.kr/x/view
 
 go 1.22.5
 

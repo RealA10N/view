@@ -4,7 +4,7 @@ import (
 	"testing"
 	"unicode"
 
-	"github.com/RealA10N/view"
+	"alon.kr/x/view"
 	"github.com/stretchr/testify/assert"
 )
 
