@@ -83,6 +83,48 @@ func TestHasSuffixSimpleCase(t *testing.T) {
 	assert.True(t, v.HasSuffix(suffix))
 }
 
+func TestLongestCommonPrefixSimpleCase(t *testing.T) {
+	v := view.NewView[int, uint]([]int{0, 1, 2, 3, 4, 5}).Subview(1, 6)
+	u := view.NewView[int, uint]([]int{1, 2, 4, 5})
+	prefix := v.LongestCommonPrefix(u)
+	assert.Equal(t, []int{1, 2}, prefix.Raw())
+}
+
+func TestLongestCommonPrefixMaxLength(t *testing.T) {
+	v := view.NewView[int, uint]([]int{0, 1, 2, 3, 4, 5}).Subview(1, 6)
+	u := view.NewView[int, uint]([]int{1, 2, 3, 4})
+	prefix := v.LongestCommonPrefix(u)
+	assert.EqualValues(t, []int{1, 2, 3, 4}, prefix.Raw())
+}
+
+func TestLongestCommonPrefixNoCommon(t *testing.T) {
+	v := view.NewView[int, uint]([]int{1, 2, 3, 4, 5})
+	u := view.NewView[int, uint]([]int{6, 7, 8, 9, 10})
+	prefix := v.LongestCommonPrefix(u)
+	assert.Equal(t, []int{}, prefix.Raw())
+}
+
+func TestLongestCommonSuffixSimpleCase(t *testing.T) {
+	v := view.NewView[int, uint]([]int{1, 2, 3, 4, 5, 6}).Subview(0, 5)
+	u := view.NewView[int, uint]([]int{2, 3, 4, 5})
+	suffix := v.LongestCommonSuffix(u)
+	assert.Equal(t, []int{2, 3, 4, 5}, suffix.Raw())
+}
+
+func TestLongestCommonSuffixMaxLength(t *testing.T) {
+	v := view.NewView[int, uint]([]int{0, 1, 2, 3, 4, 5}).Subview(0, 5)
+	u := view.NewView[int, uint]([]int{2, 3, 4})
+	suffix := v.LongestCommonSuffix(u)
+	assert.EqualValues(t, []int{2, 3, 4}, suffix.Raw())
+}
+
+func TestLongestCommonSuffixNoCommon(t *testing.T) {
+	v := view.NewView[int, uint]([]int{1, 2, 3, 4, 5})
+	u := view.NewView[int, uint]([]int{6, 7, 8, 9, 10})
+	suffix := v.LongestCommonSuffix(u)
+	assert.Equal(t, []int{}, suffix.Raw())
+}
+
 func TestMergeSimpleCase(t *testing.T) {
 	data := []int{0, 1, 2, 3, 4, 5, 6}
 	v := view.NewView[int, uint](data)
