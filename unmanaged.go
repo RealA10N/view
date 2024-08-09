@@ -92,16 +92,16 @@ func (v UnmanagedView[T, Offset]) Subview(start, end Offset) UnmanagedView[T, Of
 // Then comes the other unmanaged view, and the third argument is the context
 // of the other unmanaged view which was provided in the second argument.
 func (v UnmanagedView[T, Offset]) Equal(
-	vctx ViewContext[T], o UnmanagedView[T, Offset], octx ViewContext[T],
+	vctx ViewContext[T], u UnmanagedView[T, Offset], uctx ViewContext[T],
 ) bool {
-	if v.Len() != o.Len() {
+	if v.Len() != u.Len() {
 		return false
 	}
 
 	len := v.Len()
 	var i Offset = 0
 	for ; i < len; i++ {
-		if v.AtUnsafe(vctx, i) != o.AtUnsafe(octx, i) {
+		if v.AtUnsafe(vctx, i) != u.AtUnsafe(uctx, i) {
 			return false
 		}
 	}
