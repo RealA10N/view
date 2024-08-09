@@ -2,6 +2,7 @@ package view
 
 import (
 	"errors"
+"iter"
 
 	"golang.org/x/exp/constraints"
 )
