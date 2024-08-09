@@ -227,8 +227,8 @@ func (v UnmanagedView[T, Offset]) LongestCommonSuffix(
 ) UnmanagedView[T, Offset] {
 	n := min(v.Len(), u.Len())
 	for i := Offset(0); i < n; i++ {
-		if v.AtUnsafe(ctx, v.Len()-n+i) != u.AtUnsafe(uctx, u.Len()-n+i) {
-			return v.Subview(v.Len()-n+i, v.Len())
+		if v.AtUnsafe(ctx, v.Len()-i-1) != u.AtUnsafe(uctx, u.Len()-i-1) {
+			return v.Subview(v.Len()-i, v.Len())
 		}
 	}
 	return v.Subview(v.Len()-n, v.Len())
