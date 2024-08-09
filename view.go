@@ -81,6 +81,16 @@ func (v View[T, Offset]) HasSuffix(suffix View[T, Offset]) bool {
 	return v.unmanaged.HasSuffix(v.ctx, unmanagedSuffix, suffixCtx)
 }
 
+// Returns the longest common prefix of the current view and the provided view.
+func (v View[T, Offset]) LongestCommonPrefix(u View[T, Offset]) View[T, Offset] {
+	return v.unmanaged.LongestCommonPrefix(v.ctx, u.unmanaged, u.ctx).Attach(v.ctx)
+}
+
+// Returns the longest common suffix of the current view and the provided view.
+func (v View[T, Offset]) LongestCommonSuffix(u View[T, Offset]) View[T, Offset] {
+	return v.unmanaged.LongestCommonSuffix(v.ctx, u.unmanaged, u.ctx).Attach(v.ctx)
+}
+
 // Merge this and the other provided view into a one bigger view.
 // This is done by setting newView.Start to min(v.Start, o.Start) and
 // newView.End to max(v.End, o.End).

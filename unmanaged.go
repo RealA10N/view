@@ -2,7 +2,7 @@ package view
 
 import (
 	"errors"
-"iter"
+	"iter"
 
 	"golang.org/x/exp/constraints"
 )
@@ -202,6 +202,36 @@ func (v UnmanagedView[T, Offset]) HasSuffix(
 	}
 
 	return true
+}
+
+// Returns the longest common prefix of the current view and the provided one.
+func (v UnmanagedView[T, Offset]) LongestCommonPrefix(
+	ctx ViewContext[T],
+	u UnmanagedView[T, Offset],
+	uctx ViewContext[T],
+) UnmanagedView[T, Offset] {
+	n := min(v.Len(), u.Len())
+	for i := Offset(0); i < n; i++ {
+		if v.AtUnsafe(ctx, i) != u.AtUnsafe(uctx, i) {
+			return v.Subview(0, i)
+		}
+	}
+	return v.Subview(0, n)
+}
+
+// Returns the longest common suffix of the current view and the provided one.
+func (v UnmanagedView[T, Offset]) LongestCommonSuffix(
+	ctx ViewContext[T],
+	u UnmanagedView[T, Offset],
+	uctx ViewContext[T],
+) UnmanagedView[T, Offset] {
+	n := min(v.Len(), u.Len())
+	for i := Offset(0); i < n; i++ {
+		if v.AtUnsafe(ctx, v.Len()-n+i) != u.AtUnsafe(uctx, u.Len()-n+i) {
+			return v.Subview(v.Len()-n+i, v.Len())
+		}
+	}
+	return v.Subview(v.Len()-n, v.Len())
 }
 
 // Merge this and the other provided view into a one bigger view.
