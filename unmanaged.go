@@ -110,7 +110,7 @@ func (v UnmanagedView[T, Offset]) Equal(
 }
 
 // Iterate over all values in the view (rangefunc).
-func (v UnmanagedView[T, Offset]) Range(ctx ViewContext[T]) func(func(T) bool) {
+func (v UnmanagedView[T, Offset]) Range(ctx ViewContext[T]) iter.Seq[T] {
 	return func(yield func(T) bool) {
 		for i := v.Start; i < v.End; i++ {
 			if !yield(ctx[i]) {
@@ -123,7 +123,7 @@ func (v UnmanagedView[T, Offset]) Range(ctx ViewContext[T]) func(func(T) bool) {
 // Iterate over all values in the view (rangefunc).
 // Additionally, provides the iteration index as the first yield argument,
 // where the index is relative to the view start.
-func (v UnmanagedView[T, Offset]) Range2(ctx ViewContext[T]) func(func(Offset, T) bool) {
+func (v UnmanagedView[T, Offset]) Range2(ctx ViewContext[T]) iter.Seq2[Offset, T] {
 	return func(yield func(Offset, T) bool) {
 		var sliceIndex Offset = v.Start
 		var viewIndex Offset = 0
