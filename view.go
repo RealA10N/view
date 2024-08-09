@@ -22,6 +22,16 @@ func (v View[T, Offset]) Detach() (UnmanagedView[T, Offset], ViewContext[T]) {
 	return UnmanagedView[T, Offset](v.unmanaged), v.ctx
 }
 
+// Return the corresponding unmanaged view of the current view.
+func (v View[T, Offset]) Unmanaged() UnmanagedView[T, Offset] {
+	return v.unmanaged
+}
+
+// Return the context of the view.
+func (v View[T, Offset]) Ctx() ViewContext[T] {
+	return v.ctx
+}
+
 // Returns the raw underlying slice that the view is bound to.
 func (v View[T, Offset]) Raw() []T {
 	return v.unmanaged.Raw(v.ctx)
