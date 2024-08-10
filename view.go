@@ -66,12 +66,20 @@ func (v View[T, Offset]) Equal(o View[T, Offset]) bool {
 	return v.unmanaged.Equal(v.ctx, o.unmanaged, o.ctx)
 }
 
+// Find the first item in the view bounds that equals to the provided item.
+// Return the index of such item (relative to the view start offset).
+//
+// If no items return true on the provided predicate, returns v.Len().
+func (v View[T, Offset]) Index(item T) Offset {
+	return v.unmanaged.Index(v.ctx, item)
+}
+
 // Find the first item in the view bounds that returns true on the provided predicate.
 // Return the index of such item (relative to the view start offset).
 //
 // If no items return true on the provided predicate, returns v.Len().
-func (v View[T, Offset]) Index(f func(T) bool) Offset {
-	return v.unmanaged.Index(v.ctx, f)
+func (v View[T, Offset]) IndexFunc(f func(T) bool) Offset {
+	return v.unmanaged.IndexFunc(v.ctx, f)
 }
 
 // Returns true iff the view contains the provided item.

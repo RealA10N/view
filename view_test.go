@@ -48,18 +48,28 @@ func TestEqualSubstrings(t *testing.T) {
 }
 
 func TestIndexSimpleCase(t *testing.T) {
+	v := view.NewView[int, uint]([]int{1, 2, 3, 2, 5})
+	assert.EqualValues(t, 1, v.Index(2))
+}
+
+func TestIndexNotFound(t *testing.T) {
+	v := view.NewView[int, uint]([]int{1, 2, 3, 4, 5})
+	assert.EqualValues(t, v.Len(), v.Index(6))
+}
+
+func TestIndexFuncSimpleCase(t *testing.T) {
 	v := view.NewView[int, uint]([]int{1337, -710, 2902}).Subview(1, 3)
 	called := []int{}
-	idx := v.Index(func(n int) bool { called = append(called, n); return n > 0 })
+	idx := v.IndexFunc(func(n int) bool { called = append(called, n); return n > 0 })
 	assert.EqualValues(t, 1, idx)
 	assert.Equal(t, []int{-710, 2902}, called)
 }
 
-func TestIndexNotFound(t *testing.T) {
+func TestIndexFuncNotFound(t *testing.T) {
 	data := []int{-1, 2, 3, -4}
 	v := view.NewView[int, uint](data)
 	called := []int{}
-	idx := v.Index(func(n int) bool { called = append(called, n); return n > 10 })
+	idx := v.IndexFunc(func(n int) bool { called = append(called, n); return n > 10 })
 	assert.EqualValues(t, len(data), idx)
 	assert.Equal(t, data, called)
 }

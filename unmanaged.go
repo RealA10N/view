@@ -140,11 +140,25 @@ func (v UnmanagedView[T, Offset]) Range2(ctx ViewContext[T]) iter.Seq2[Offset, T
 	}
 }
 
+// Find the first item in the view bounds that equals to the provided item.
+// Return the index of such item (relative to the view start offset).
+//
+// If no items return true on the provided predicate, returns v.Len().
+func (v UnmanagedView[T, Offset]) Index(ctx ViewContext[T], item T) Offset {
+	for idx, cur := range v.Range2(ctx) {
+		if cur == item {
+			return idx
+		}
+	}
+
+	return v.Len()
+}
+
 // Find the first item in the view bounds that returns true on the provided predicate.
 // Return the index of such item (relative to the view start offset).
 //
 // If no items return true on the provided predicate, returns v.Len().
-func (v UnmanagedView[T, Offset]) Index(ctx ViewContext[T], f func(T) bool) Offset {
+func (v UnmanagedView[T, Offset]) IndexFunc(ctx ViewContext[T], f func(T) bool) Offset {
 	for idx, item := range v.Range2(ctx) {
 		if f(item) {
 			return idx
