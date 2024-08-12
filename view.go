@@ -56,6 +56,30 @@ func (v View[T, Offset]) AtUnsafe(index Offset) T {
 	return v.unmanaged.AtUnsafe(v.ctx, index)
 }
 
+// Returns the first item in the view bounds.
+// If the view is empty, an error is returned, with an undefined value.
+func (v View[T, Offset]) Front() (T, error) {
+	return v.unmanaged.Front(v.ctx)
+}
+
+// Returns the first item in the view bounds.
+// If the view is empty, the function might panic or return an undefined value.
+func (v View[T, Offset]) FrontUnsafe() T {
+	return v.unmanaged.FrontUnsafe(v.ctx)
+}
+
+// Returns the last item in the view bounds.
+// If the view is empty, an error is returned, with an undefined value.
+func (v View[T, Offset]) Back() (T, error) {
+	return v.unmanaged.Back(v.ctx)
+}
+
+// Returns the last item in the view bounds.
+// If the view is empty, the function might panic or return an undefined value.
+func (v View[T, Offset]) BackUnsafe() T {
+	return v.unmanaged.BackUnsafe(v.ctx)
+}
+
 // Return a subview of the current view, by start and end indecies.
 func (v View[T, Offset]) Subview(start, end Offset) View[T, Offset] {
 	return v.unmanaged.Subview(start, end).Attach(v.ctx)
