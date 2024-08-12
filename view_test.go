@@ -186,6 +186,22 @@ func TestMergeSimpleCase(t *testing.T) {
 	assert.Equal(t, []int{1, 2, 3, 4, 5}, m.Raw())
 }
 
+func TestMergeStart(t *testing.T) {
+	data := []int{0, 1, 2, 3, 4, 5, 6}
+	v := view.NewView[int, uint](data)
+	a := v.Subview(2, 3)
+	b := v.Subview(1, 6)
+	assert.Equal(t, v.Subview(1, 3), a.MergeStart(b))
+}
+
+func TestMergeEnd(t *testing.T) {
+	data := []int{0, 1, 2, 3, 4, 5, 6}
+	v := view.NewView[int, uint](data)
+	a := v.Subview(1, 3)
+	b := v.Subview(2, 6)
+	assert.Equal(t, v.Subview(1, 6), a.MergeEnd(b))
+}
+
 func TestPartitionSimpleCase(t *testing.T) {
 	data := []int{1, 2, 3, 4, 5}
 	v := view.NewView[int, uint](data)
