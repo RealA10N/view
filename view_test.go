@@ -8,6 +8,48 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestFront(t *testing.T) {
+	data := []int{1, 2, 3}
+	v := view.NewView[int, uint](data).Subview(1, 3)
+	front, err := v.Front()
+	assert.NoError(t, err)
+	assert.Equal(t, 2, front)
+}
+
+func TestFrontErr(t *testing.T) {
+	data := []int{1, 2, 3}
+	v := view.NewView[int, uint](data).Subview(2, 2)
+	_, err := v.Front()
+	assert.Error(t, err)
+}
+
+func TestFrontUnsafe(t *testing.T) {
+	data := []int{1, 2, 3}
+	v := view.NewView[int, uint](data).Subview(1, 3)
+	assert.EqualValues(t, 2, v.FrontUnsafe())
+}
+
+func TestBack(t *testing.T) {
+	data := []int{1, 2, 3}
+	v := view.NewView[int, uint](data).Subview(0, 2)
+	back, err := v.Back()
+	assert.NoError(t, err)
+	assert.Equal(t, 2, back)
+}
+
+func TestBackErr(t *testing.T) {
+	data := []int{1, 2, 3}
+	v := view.NewView[int, uint](data).Subview(2, 2)
+	_, err := v.Back()
+	assert.Error(t, err)
+}
+
+func TestBackUnsafe(t *testing.T) {
+	data := []int{1, 2, 3}
+	v := view.NewView[int, uint](data).Subview(1, 2)
+	assert.EqualValues(t, 2, v.BackUnsafe())
+}
+
 func TestSimpleSubview(t *testing.T) {
 	data := []int{0, 1, 2, 3, 4, 5, 6}
 	v := view.NewView[int, uint](data).Subview(1, 4)
