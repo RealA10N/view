@@ -296,6 +296,32 @@ func (v UnmanagedView[T, Offset]) Merge(others ...UnmanagedView[T, Offset]) Unma
 	return nv
 }
 
+// Merge this and the other provided view into a one bigger view, by returning
+// a new view with the same end location, but the minimal start location out of
+// all provided views.
+func (v UnmanagedView[T, Offset]) MergeStart(others ...UnmanagedView[T, Offset]) UnmanagedView[T, Offset] {
+	nv := v
+
+	for _, o := range others {
+		nv.Start = min(nv.Start, o.Start)
+	}
+
+	return nv
+}
+
+// Merge this and the other provided view into a one bigger view, by returning
+// a new view with the same start location, but the maximal end location out of
+// all provided views.
+func (v UnmanagedView[T, Offset]) MergeEnd(others ...UnmanagedView[T, Offset]) UnmanagedView[T, Offset] {
+	nv := v
+
+	for _, o := range others {
+		nv.End = max(nv.End, o.End)
+	}
+
+	return nv
+}
+
 // Partition this view to two consecutive views, splitting them at the provided index.
 func (v UnmanagedView[T, Offset]) Partition(
 	ctx ViewContext[T], index Offset,

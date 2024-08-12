@@ -138,10 +138,24 @@ func (v View[T, Offset]) LongestCommonSuffix(u View[T, Offset]) View[T, Offset] 
 // newView.End to max(v.End, o.End).
 //
 // This assumes that both views operate under the same context.
-// More specificly, the context of the returned view will be the context of
+// More specifically, the context of the returned view will be the context of
 // this view.
 func (v View[T, Offset]) Merge(others ...View[T, Offset]) View[T, Offset] {
 	return v.unmanaged.Merge(detachMany(others)...).Attach(v.ctx)
+}
+
+// Merge this and the other provided view into a one bigger view, by returning
+// a new view with the same end location, but the minimal start location out of
+// all provided views.
+func (v View[T, Offset]) MergeStart(others ...View[T, Offset]) View[T, Offset] {
+	return v.unmanaged.MergeStart(detachMany(others)...).Attach(v.ctx)
+}
+
+// Merge this and the other provided view into a one bigger view, by returning
+// a new view with the same start location, but the maximal end location out of
+// all provided views.
+func (v View[T, Offset]) MergeEnd(others ...View[T, Offset]) View[T, Offset] {
+	return v.unmanaged.MergeEnd(detachMany(others)...).Attach(v.ctx)
 }
 
 // Partition this view to two consecutive views, splitting them at the provided index.
