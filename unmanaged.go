@@ -9,7 +9,7 @@ import (
 
 // The most basic slice view type.
 // Internally, it contains a pointer to a heap allocated slice of type []T,
-// and Start & End indecies of type Offset.
+// and Start & End indices of type Offset.
 type UnmanagedView[T comparable, Offset constraints.Unsigned] struct {
 	Start, End Offset
 }
@@ -103,7 +103,7 @@ func (v UnmanagedView[T, Offset]) BackUnsafe(ctx ViewContext[T]) T {
 }
 
 // Return a subview of the current view.
-// Start and End indecies are relative to the current view bounds,
+// Start and End indices are relative to the current view bounds,
 // i.e. v.Subview(0, v.Len()) will return a subview that equals to the current one.
 func (v UnmanagedView[T, Offset]) Subview(start, end Offset) UnmanagedView[T, Offset] {
 	len := v.Len()

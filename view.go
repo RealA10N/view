@@ -16,7 +16,7 @@ func NewView[T comparable, Offset constraints.Unsigned](data []T) View[T, Offset
 	return unmanaged.Attach(ctx)
 }
 
-// Extract the unmanged view and context from the current view, and return
+// Extract the unmanaged view and context from the current view, and return
 // copies of them. The old view is still valid and safe to use.
 func (v View[T, Offset]) Detach() (UnmanagedView[T, Offset], ViewContext[T]) {
 	return UnmanagedView[T, Offset](v.unmanaged), v.ctx
@@ -80,7 +80,7 @@ func (v View[T, Offset]) BackUnsafe() T {
 	return v.unmanaged.BackUnsafe(v.ctx)
 }
 
-// Return a subview of the current view, by start and end indecies.
+// Return a subview of the current view, by start and end indices.
 func (v View[T, Offset]) Subview(start, end Offset) View[T, Offset] {
 	return v.unmanaged.Subview(start, end).Attach(v.ctx)
 }
